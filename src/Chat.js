@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import {
     Button,
     List,
@@ -31,7 +32,13 @@ class Chat extends React.Component {
         this.post = this.post.bind(this);
         this.update = this.update.bind(this);
         this.delete = this.delete.bind(this);
-        this.get();
+        
+    }
+    
+    componentDidUpdate(prevProps) {
+        if (this.props.user !== prevProps.user) {
+            this.get();
+        }
     }
     
     handleChangeName(e) {
@@ -42,11 +49,15 @@ class Chat extends React.Component {
     
     handleWriteMessage(e) {
         this.setState({
-            newMessage: e.target.value
+            newMessage: e.target.value,
         });
     }
 
     get() {
+//        console.log('this.props.user');
+//        console.log(this.props.user);
+//        
+//        if (!this.props.user.status) return;
         const {
             firestore
         } = this;
@@ -60,8 +71,12 @@ class Chat extends React.Component {
             messages.sort((a, b) => (
                 a.date - b.date
             ));
-            this.setState({
-                messages
+//            this.setState({
+//                messages,
+//            });
+            this.props.dispatch({
+                type: 'ADD_MESSAGES',
+                payload: messages,
             });
         });
     }
@@ -69,10 +84,12 @@ class Chat extends React.Component {
     post(e) {
         e.preventDefault();
         const { newMessage, author } = this.state;
+        const { uid } = this.props.user;
         this.firestore.collection(COLLECTION_NAME).add({
             content: newMessage,
-            author: author,
+            author: this.props.user.name,
             date: Date.now(),
+            author_uid: uid ? uid : null,
         });
     }
 
@@ -83,9 +100,7 @@ class Chat extends React.Component {
 //        const id = e.target.dataset.id;
 //        firestore.collection(COLLECTION_NAME).doc(id).set({
 //            completed: true,
-//        }, {
-//            merge: true
-//        });
+//        }, { merge: true });
     }
 
     delete(e) {
@@ -101,14 +116,17 @@ class Chat extends React.Component {
     }
   
     render() {
+        //this.get();
+        //console.log(this.props);
+        //const { avatar, email, name, status, uid } = this.props.user;
         return (
             <>
                 <Input type='text' placeholder="Your Name..." value={this.state.author} onChange={this.handleChangeName} />
-                {this.state.messages.length ?
+                {this.props.messages.length ?
                     <List
                         size="large"
                         bordered
-                        dataSource={this.state.messages}
+                        dataSource={this.props.messages}
                         renderItem={message =>
                             <List.Item>
                                 <Tag color='green'>{message.author}:</Tag>
@@ -139,4 +157,14 @@ class Chat extends React.Component {
     }
 }
 
-export default Chat;
+//export default Chat;
+
+const mapStateToProps = state => {
+    return {
+        user: state.user,
+        messages: state.messages,
+    }
+}
+
+
+export default connect(mapStateToProps)(Chat);
