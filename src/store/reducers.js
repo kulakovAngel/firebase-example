@@ -2,8 +2,10 @@ import { combineReducers } from 'redux';
 
 const messagesReducer = (state = [], action) => {
     switch(action.type) {
-        case "ADD_MESSAGES":
+        case 'ADD_MESSAGES':
             return action.payload;
+        case 'REMOVE_MESSAGES':
+            return [];
         default:
             return state;
     }
@@ -11,7 +13,7 @@ const messagesReducer = (state = [], action) => {
 
 const userReducer = (state = {}, action) => {
     switch(action.type) {
-        case "ADD_USER":
+        case 'ADD_USER':
             return action.payload;
         default:
             return state;

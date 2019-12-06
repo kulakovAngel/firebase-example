@@ -15,10 +15,10 @@ const firebaseConfig = {
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
+let unsubscribe = function(){};
+
 firebase.auth().onAuthStateChanged((user) => {
     if (user) {
-        console.log('user uid:');
-        console.log(user);
         store.dispatch({
             type: 'ADD_USER',
             payload: {status: true,
@@ -28,8 +28,8 @@ firebase.auth().onAuthStateChanged((user) => {
                       avatar: user.photoURL
                      },
         });
+        snap();
     } else {
-        console.log('log out');
         store.dispatch({
             type: 'ADD_USER',
             payload: {status: false,
@@ -39,9 +39,28 @@ firebase.auth().onAuthStateChanged((user) => {
                       avatar: ''
                      },
         });
+        unsubscribe();
     }
 });
 
+
+function snap() {
+    unsubscribe = firebase.firestore().collection('messages').onSnapshot(snapshot => {
+        let messages = [];
+        snapshot.forEach(doc => {
+            const message = doc.data();
+            message.id = doc.id;
+            messages.push(message);
+        });
+        messages.sort((a, b) => (
+            a.date - b.date
+        ));
+        store.dispatch({
+            type: 'ADD_MESSAGES',
+            payload: messages,
+        });
+    });
+}
 
 
 //firebase.firestore().collection('messages').onSnapshot(snapshot => {

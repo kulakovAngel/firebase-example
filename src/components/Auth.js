@@ -95,6 +95,9 @@ class Auth extends React.Component {
                     },
                 },
             });
+            this.props.dispatch({
+                type: 'REMOVE_MESSAGES',
+            });
             console.log('Sign-out successful.');
         }).catch((error) => {
             this.setState({
@@ -126,7 +129,6 @@ class Auth extends React.Component {
                 <Button type="primary" ghost onClick={this.signIn}>Sign In</Button>
                 <Button type="primary" ghost onClick={this.signOut}>Sign Out</Button>
                 { status &&
-
                     <Card title={`Hello, ${name}!`} extra={<a href="#"><Badge count={1}>
                                 <Avatar icon="user" size="large" src={ avatar } />
                             </Badge></a>} >

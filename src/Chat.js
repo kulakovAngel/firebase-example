@@ -25,26 +25,12 @@ class Chat extends React.Component {
             newMessage: '',
             author: 'Unknown Author',
         };
-        this.handleChangeName = this.handleChangeName.bind(this);
         this.handleWriteMessage = this.handleWriteMessage.bind(this);
         this.firestore = firebase.firestore();
-        this.get = this.get.bind(this);
         this.post = this.post.bind(this);
         this.update = this.update.bind(this);
         this.delete = this.delete.bind(this);
         
-    }
-    
-    componentDidUpdate(prevProps) {
-        if (this.props.user !== prevProps.user) {
-            this.get();
-        }
-    }
-    
-    handleChangeName(e) {
-        this.setState({
-            author: e.target.value
-        });
     }
     
     handleWriteMessage(e) {
@@ -53,44 +39,17 @@ class Chat extends React.Component {
         });
     }
 
-    get() {
-//        console.log('this.props.user');
-//        console.log(this.props.user);
-//        
-//        if (!this.props.user.status) return;
-        const {
-            firestore
-        } = this;
-        firestore.collection(COLLECTION_NAME).onSnapshot(snapshot => {
-            let messages = [];
-            snapshot.forEach(doc => {
-                const message = doc.data();
-                message.id = doc.id;
-                messages.push(message);
-            });
-            messages.sort((a, b) => (
-                a.date - b.date
-            ));
-//            this.setState({
-//                messages,
-//            });
-            this.props.dispatch({
-                type: 'ADD_MESSAGES',
-                payload: messages,
-            });
-        });
-    }
-
     post(e) {
         e.preventDefault();
         const { newMessage, author } = this.state;
-        const { uid } = this.props.user;
+        const { uid, name } = this.props.user;
         this.firestore.collection(COLLECTION_NAME).add({
             content: newMessage,
-            author: this.props.user.name,
+            author: name,
             date: Date.now(),
             author_uid: uid ? uid : null,
         });
+        this.setState({newMessage: ''});
     }
 
     update(e) {
@@ -121,7 +80,6 @@ class Chat extends React.Component {
         //const { avatar, email, name, status, uid } = this.props.user;
         return (
             <>
-                <Input type='text' placeholder="Your Name..." value={this.state.author} onChange={this.handleChangeName} />
                 {this.props.messages.length ?
                     <List
                         size="large"
