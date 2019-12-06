@@ -15,6 +15,8 @@ const userReducer = (state = {}, action) => {
     switch(action.type) {
         case 'ADD_USER':
             return action.payload;
+        case 'ADD_NUM_OF_USER_MESSAGES':
+            return Object.assign({}, state, {numOfMessages: action.payload});
         default:
             return state;
     }

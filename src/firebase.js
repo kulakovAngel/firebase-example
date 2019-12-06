@@ -17,7 +17,7 @@ firebase.initializeApp(firebaseConfig);
 
 let unsubscribe = function(){};
 
-firebase.auth().onAuthStateChanged((user) => {
+firebase.auth().onAuthStateChanged( user => {
     if (user) {
         store.dispatch({
             type: 'ADD_USER',
@@ -29,6 +29,7 @@ firebase.auth().onAuthStateChanged((user) => {
                      },
         });
         snap();
+        registerNewUser(user);
     } else {
         store.dispatch({
             type: 'ADD_USER',
@@ -44,11 +45,47 @@ firebase.auth().onAuthStateChanged((user) => {
 });
 
 
+//function snap() {
+//    unsubscribe = firebase.firestore().collection('messages').onSnapshot(snapshot => {
+//        let messages = [];
+//        snapshot.forEach(doc => {
+//            const message = doc.data();
+//            message.id = doc.id;
+//            messages.push(message);
+//        });
+//        messages.sort((a, b) => (
+//            a.date - b.date
+//        ));
+//        store.dispatch({
+//            type: 'ADD_MESSAGES',
+//            payload: messages,
+//        });
+//    });
+//}
+
 function snap() {
+    const user_uid = store.getState().user.uid;
     unsubscribe = firebase.firestore().collection('messages').onSnapshot(snapshot => {
-        let messages = [];
+        const messages = [];
+//        snapshot.docChanges().forEach((change) => {
+//            switch (change.type) {
+//                case 'added':
+//                    console.log("New city: ", change.doc.data());
+//                    break;
+//                case 'modified':
+//                    console.log("Modified city: ", change.doc.data());
+//                    break;
+//                case 'removed':
+//                    console.log("Removed city: ", change.doc.data());
+//                    break;
+//            }
+//        });
+        let user_messages = 0;
         snapshot.forEach(doc => {
             const message = doc.data();
+            if (message.author_uid === user_uid) {
+                user_messages++;
+            }
             message.id = doc.id;
             messages.push(message);
         });
@@ -59,66 +96,38 @@ function snap() {
             type: 'ADD_MESSAGES',
             payload: messages,
         });
+        store.dispatch({
+            type: 'ADD_NUM_OF_USER_MESSAGES',
+            payload: user_messages,
+        });
     });
 }
 
+function registerNewUser({ uid, displayName: name }) {
+    const store = firebase.firestore();
+    store.collection('users').doc(uid).get().then(doc => {
+        if (!doc.exists) {
+            store.collection('users').doc(uid).set({
+                name,
+                uid,
+                date: Date.now(),
+            });
+        }
+    });
+}
 
-//firebase.firestore().collection('messages').onSnapshot(snapshot => {
-//    console.log('onSnapshot onSnapshot onSnapshot onSnapshot');
-//            let messages = [];
-//            snapshot.forEach(doc => {
-//                const message = doc.data();
-//                message.id = doc.id;
-//                messages.push(message);
-//            });
-//            messages.sort((a, b) => (
-//                a.date - b.date
-//            ));
-//            store.dispatch({
-//                type: 'ADD_MESSAGES',
-//                payload: messages,
-//            });
-//        });
+//function isUserExist({ uid }) {
+//    const store = firebase.firestore();
+//    store.collection('users').doc(uid).get().then(doc => {
+//        if (doc.exists) {
+//            console.log("Document data:", doc.data());
+//            return true;
+//        } else {
+//            // doc.data() will be undefined in this case
+//            console.log("No such document!");
+//            return false;
+//        }
+//    });
+//}
 
 export default firebase;
-//    get() {
-//        const {
-//            firestore
-//        } = this;
-//        firestore.collection(COLLECTION_NAME).onSnapshot(snapshot => {
-//            let messages = [];
-//            snapshot.forEach(doc => {
-//                const message = doc.data();
-//                message.id = doc.id;
-//                messages.push(message);
-//            });
-//            messages.sort((a, b) => (
-//                a.date - b.date
-//            ));
-////            this.setState({
-////                messages,
-////            });
-//            this.props.dispatch({
-//                type: 'ADD_MESSAGES',
-//                payload: messages,
-//            });
-//        });
-//    }
-
-
-//auth: {
-//                    status: false,
-//                    token: '',
-//                    name: '',
-//                    email: '',
-//                    avatar: '',
-//                    error: {
-//                        status: false,
-//                        info: {
-//                            code: '',
-//                            message: '',
-//                            email: '',
-//                            credential: '',
-//                        },
-//                    },
-//                },

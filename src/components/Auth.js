@@ -123,13 +123,13 @@ class Auth extends React.Component {
 //            name,
 //            avatar
 //        } = this.state.auth;
-        const { avatar, name, status } = this.props.user;
+        const { avatar, name, status, numOfMessages } = this.props.user;
         return (
             <>
                 <Button type="primary" ghost onClick={this.signIn}>Sign In</Button>
                 <Button type="primary" ghost onClick={this.signOut}>Sign Out</Button>
                 { status &&
-                    <Card title={`Hello, ${name}!`} extra={<a href="#"><Badge count={1}>
+                    <Card title={`Hello, ${name}!`} extra={<a href="#"><Badge count={numOfMessages}>
                                 <Avatar icon="user" size="large" src={ avatar } />
                             </Badge></a>} >
                         <p>You may post the message</p>

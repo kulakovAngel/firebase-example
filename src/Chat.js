@@ -12,6 +12,8 @@ import {
 } from 'antd';
 
 import firebase from './firebase';
+import { formateDate } from './functions';
+
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
 
 const COLLECTION_NAME = 'messages';
@@ -23,14 +25,13 @@ class Chat extends React.Component {
         this.state = {
             messages: [],
             newMessage: '',
-            author: 'Unknown Author',
         };
         this.handleWriteMessage = this.handleWriteMessage.bind(this);
         this.firestore = firebase.firestore();
         this.post = this.post.bind(this);
         this.update = this.update.bind(this);
         this.delete = this.delete.bind(this);
-        
+        this.new = this.new.bind(this);
     }
     
     handleWriteMessage(e) {
@@ -73,11 +74,22 @@ class Chat extends React.Component {
             console.error("Error removing document: ", error);
         });
     }
-  
+    
+    new() {
+//        const { uid, name } = this.props.user;
+//        this.firestore.collection(uid).add({
+//            content: newMessage,
+//            author: name,
+//            date: Date.now(),
+//            author_uid: uid ? uid : null,
+//        });
+    }
+    
     render() {
         //this.get();
         //console.log(this.props);
         //const { avatar, email, name, status, uid } = this.props.user;
+        const { user, messages } = this.props;
         return (
             <>
                 {this.props.messages.length ?
@@ -87,10 +99,14 @@ class Chat extends React.Component {
                         dataSource={this.props.messages}
                         renderItem={message =>
                             <List.Item>
-                                <Tag color='green'>{message.author}:</Tag>
+                         <Tag color='green'>{message.author}{message.author_uid === user.uid && <b style={{color: '#f77'}}> (You)</b>}:<br/>{formateDate(message.date)}</Tag>
                                 {message.content}
-                                <Button type="primary" ghost onClick={this.update} data-id={message.id}>Edit</Button>
-                                <Button type="danger" ghost onClick={this.delete} data-id={message.id}>Delete</Button>
+                                {message.author_uid === user.uid &&
+                                    <>
+                                        <Button type="primary" ghost onClick={this.update} data-id={message.id}>Edit</Button>
+                                        <Button type="danger" ghost onClick={this.delete} data-id={message.id}>Delete</Button>
+                                    </>
+                                }
                             </List.Item>}
                     />
                 :
@@ -110,6 +126,10 @@ class Chat extends React.Component {
                         </Col>
                     </Row>
                 </Form>
+                <Button type="primary" onClick={this.new}>
+                    <Icon type="plus" />
+                    Create new chat
+                </Button>
             </>
         );
     }
