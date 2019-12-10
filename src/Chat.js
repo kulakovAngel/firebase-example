@@ -42,7 +42,7 @@ class Chat extends React.Component {
 
     post(e) {
         e.preventDefault();
-        const { newMessage, author } = this.state;
+        const { newMessage } = this.state;
         const { uid, name } = this.props.user;
         this.firestore.collection(COLLECTION_NAME).add({
             content: newMessage,
@@ -96,8 +96,8 @@ class Chat extends React.Component {
                     <List
                         size="large"
                         bordered
-                        dataSource={this.props.messages}
-                        renderItem={message =>
+                        dataSource={ messages }
+                        renderItem={ message =>
                             <List.Item>
                          <Tag color='green'>{message.author}{message.author_uid === user.uid && <b style={{color: '#f77'}}> (You)</b>}:<br/>{formateDate(message.date)}</Tag>
                                 {message.content}

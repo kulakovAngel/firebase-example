@@ -1,3 +1,13 @@
 #root {
-  padding: 12px;
+    min-height: 100vh;
+    display: flex;
+}
+
+.ant-layout>header {
+    color: antiquewhite;
+}
+
+.ant-layout>footer {
+    background: #001529;
+    color: antiquewhite;
 }

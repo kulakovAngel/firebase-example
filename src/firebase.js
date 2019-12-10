@@ -103,13 +103,15 @@ function snap() {
     });
 }
 
-function registerNewUser({ uid, displayName: name }) {
+function registerNewUser({ uid, displayName: name, email, photoURL: avatar }) {
     const store = firebase.firestore();
     store.collection('users').doc(uid).get().then(doc => {
         if (!doc.exists) {
             store.collection('users').doc(uid).set({
                 name,
                 uid,
+                email,
+                avatar,
                 date: Date.now(),
             });
         }

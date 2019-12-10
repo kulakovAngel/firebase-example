@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Button, Icon, Avatar, Badge, Alert, Card } from 'antd';
+import { Button, Avatar, Badge, Card } from 'antd';
 
 import firebase from './../firebase';
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
@@ -129,7 +129,7 @@ class Auth extends React.Component {
                 <Button type="primary" ghost onClick={this.signIn}>Sign In</Button>
                 <Button type="primary" ghost onClick={this.signOut}>Sign Out</Button>
                 { status &&
-                    <Card title={`Hello, ${name}!`} extra={<a href="#"><Badge count={numOfMessages}>
+                    <Card title={`Hello, ${name}!`} extra={<a href="/"><Badge count={numOfMessages}>
                                 <Avatar icon="user" size="large" src={ avatar } />
                             </Badge></a>} >
                         <p>You may post the message</p>
