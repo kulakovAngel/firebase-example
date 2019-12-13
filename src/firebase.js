@@ -1,4 +1,3 @@
-import store from './store';
 import firebase from 'firebase';
 
 // Your web app's Firebase configuration
@@ -15,34 +14,31 @@ const firebaseConfig = {
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
-let unsubscribe = function(){};
-
-firebase.auth().onAuthStateChanged( user => {
-    if (user) {
-        store.dispatch({
-            type: 'ADD_USER',
-            payload: {status: true,
-                      name: user.displayName,
-                      uid: user.uid,
-                      email: user.email,
-                      avatar: user.photoURL
-                     },
-        });
-        snap();
-        registerNewUser(user);
-    } else {
-        store.dispatch({
-            type: 'ADD_USER',
-            payload: {status: false,
-                      name: '',
-                      uid: '',
-                      email: '',
-                      avatar: ''
-                     },
-        });
-        unsubscribe();
-    }
-});
+//firebase.auth().onAuthStateChanged( user => {
+//    if (user) {
+//        store.dispatch({
+//            type: 'ADD_USER',
+//            payload: {status: true,
+//                      name: user.displayName,
+//                      uid: user.uid,
+//                      email: user.email,
+//                      avatar: user.photoURL
+//                     },
+//        });
+//        registerNewUser(user);
+//    } else {
+//        store.dispatch({
+//            type: 'ADD_USER',
+//            payload: {status: false,
+//                      name: '',
+//                      uid: '',
+//                      email: '',
+//                      avatar: ''
+//                     },
+//        });
+//        unsubscribe();
+//    }
+//});
 
 
 //function snap() {
@@ -63,7 +59,7 @@ firebase.auth().onAuthStateChanged( user => {
 //    });
 //}
 
-function snap() {
+/*export function snap() {
     const user_uid = store.getState().user.uid;
     unsubscribe = firebase.firestore().collection('messages').onSnapshot(snapshot => {
         const messages = [];
@@ -102,21 +98,50 @@ function snap() {
         });
     });
 }
+*/
+//export function snapLast() {
+//    console.log('snapLast');
+//    const num = store.getState().loadMoreMessages;
+//    const user_uid = store.getState().user.uid;
+//    firebase.firestore().collection('messages').orderBy("date", "desc").limit(num).onSnapshot((snapshot) => {
+//        const messages = [];
+//        let user_messages = 0;
+//        snapshot.forEach(doc => {
+//            const message = doc.data();
+//            if (message.author_uid === user_uid) {
+//                user_messages++;
+//            }
+//            message.id = doc.id;
+//            messages.push(message);
+//        });
+//        messages.sort((a, b) => (
+//            a.date - b.date
+//        ));
+//        store.dispatch({
+//            type: 'ADD_MESSAGES',
+//            payload: messages,
+//        });
+//        store.dispatch({
+//            type: 'ADD_NUM_OF_USER_MESSAGES',
+//            payload: user_messages,
+//        });
+//    });
+//}
 
-function registerNewUser({ uid, displayName: name, email, photoURL: avatar }) {
-    const store = firebase.firestore();
-    store.collection('users').doc(uid).get().then(doc => {
-        if (!doc.exists) {
-            store.collection('users').doc(uid).set({
-                name,
-                uid,
-                email,
-                avatar,
-                date: Date.now(),
-            });
-        }
-    });
-}
+//function registerNewUser({ uid, displayName: name, email, photoURL: avatar }) {
+//    const store = firebase.firestore();
+//    store.collection('users').doc(uid).get().then(doc => {
+//        if (!doc.exists) {
+//            store.collection('users').doc(uid).set({
+//                name,
+//                uid,
+//                email,
+//                avatar,
+//                date: Date.now(),
+//            });
+//        }
+//    });
+//}
 
 //function isUserExist({ uid }) {
 //    const store = firebase.firestore();

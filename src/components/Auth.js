@@ -12,19 +12,11 @@ class Auth extends React.Component {
         this.state = {
             auth: {}
         };
+        this.provider = new firebase.auth.GoogleAuthProvider();
         this.signIn = this.signIn.bind(this);
         this.signOut = this.signOut.bind(this);
-        //this.firestore = firebase.firestore();
-        this.provider = new firebase.auth.GoogleAuthProvider();
-//        firebase.auth().onAuthStateChanged(function(user) {
-//          if (user) {
-//             // успешно авторизован, объект user содержит username и т.п.
-//              console.log('user uid:');
-//             console.log(user.uid);
-//          }
-//        });
     }
-
+    
     signIn(e) {
         firebase.auth().signInWithPopup(this.provider).then( (result) => {
             // This gives you a Google Access Token. You can use it to access the Google API.
@@ -118,20 +110,19 @@ class Auth extends React.Component {
     }
 
     render() {
-//        const {
-//            status,
-//            name,
-//            avatar
-//        } = this.state.auth;
         const { avatar, name, status, numOfMessages } = this.props.user;
+        console.log(numOfMessages);
         return (
             <>
                 <Button type="primary" ghost onClick={this.signIn}>Sign In</Button>
                 <Button type="primary" ghost onClick={this.signOut}>Sign Out</Button>
-                { status &&
-                    <Card title={`Hello, ${name}!`} extra={<a href="/"><Badge count={numOfMessages}>
+                {status &&
+                    <Card title={`Hello, ${name}!`} extra={
+                        <a href="/">
+                            <Badge count={numOfMessages}>
                                 <Avatar icon="user" size="large" src={ avatar } />
-                            </Badge></a>} >
+                            </Badge>
+                        </a>}>
                         <p>You may post the message</p>
                     </Card>
                 }
@@ -140,13 +131,10 @@ class Auth extends React.Component {
     }
 }
 
-//export default Auth;
 
 const mapStateToProps = state => {
     return {
         user: state.user,
     }
 }
-
-
 export default connect(mapStateToProps)(Auth);

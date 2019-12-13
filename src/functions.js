@@ -1,3 +1,5 @@
+import firebase from './firebase';
+
 export function formateDate(ms) {
     const d = new Date(ms);
     
@@ -17,4 +19,13 @@ export function formateDate(ms) {
     seconds = (seconds <= 9) ? '0' + seconds : seconds;
     
     return `${day}.${month}.${d.getFullYear()} at ${hours}:${minutes}.${seconds}`;
+}
+
+export async function getUserAvatar(userUID) {
+    const docRef = firebase.firestore().collection("users").doc(userUID);
+    let a;
+    await docRef.get().then((doc) => {
+        a = (doc.data()) && doc.data().avatar
+    });
+    return a;
 }

@@ -1,11 +1,9 @@
 import React from 'react';
 import { Drawer, Button, Icon } from 'antd';
-import { NavLink } from 'react-router-dom';
 
 import NavLinks from './NavLinks';
 import Auth from './Auth';
 
-import './SideBar.css';
 
 class SideBar extends React.Component {
     constructor(props) {

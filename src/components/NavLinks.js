@@ -14,6 +14,9 @@ function NavLinks() {
             <li>
                 <NavLink exact to='/todo-list'>Todo List</NavLink>
             </li>
+            <li>
+                <NavLink exact to='/document'>Сommon Document</NavLink>
+            </li>
         </ul>
     )
 }
